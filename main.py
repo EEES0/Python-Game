@@ -3,7 +3,7 @@ import random #랜덤 라이브러리 임포트
 import os #os 라이브러리 임포트
 import sys #sys 라이브러리 임포트
 
-def get_path(*paths): #환경에 따라 path(경로) 바꿈
+def get_path(*paths): #환경에 따라 path(경로) 바꿈 - 경로 꼬이지 않게
     if getattr(sys, 'frozen', False):
         base_path = sys._MEIPASS
     else:
@@ -23,7 +23,7 @@ class GameView(arcade.View): #arcade.View 클래스를 상속받아 GameView 클
         self.upgradeClicked = False #업그레이드 버튼 클릭 여부 
         self.upgradeRandom = 0 #강화- 랜덤 정수
         self.upgradePercent = 100 #강화 확률
-        self.upgradeGold = 0 #강화 소모 골드
+        self.upgradeGold = 0 #강화 소모 골드ㅎ
         self.sellCost = 0 #강화 판매 골드
 
     def setup(self): 
@@ -36,6 +36,7 @@ class GameView(arcade.View): #arcade.View 클래스를 상속받아 GameView 클
         self.upgradePercentText = arcade.Text(f"성공 확률: {self.upgradePercent}%", 530, 90, arcade.color.BLACK, 20) #업그레이드 성공 확률 화면 상단에 표시
         self.sellCostText = arcade.Text(f"판매 가격: {self.sellCost}", 530, 150, arcade.color.BLACK, 20) #판매 가격 화면 상단에 표시
         self.maxLevel = arcade.Text("클리어", 100, 600, arcade.color.BLACK, 30) #만렙 달성
+        self.consoleText = arcade.Text("콘솔", 100, 500, arcade.color.BLACK, 30) #콘솔 텍스트
         self.levelTexture = [ #레벨별 이미지 스프라이트들
             arcade.load_texture(get_path("Assets","Level1.png")),
             arcade.load_texture(get_path("Assets","Level2.png")),
@@ -68,7 +69,7 @@ class GameView(arcade.View): #arcade.View 클래스를 상속받아 GameView 클
         self.buttons[self.upgradeBtn] = self.upgrade #업그레이드 버튼 딕셔너리에 추가
 
         self.sellBtn = arcade.Sprite(
-            os.path.join(BASE_PATH,"Assets","Sell.png")
+            get_path("Assets","Sell.png")
         ) #판매 버튼 이미지 스프라이트로 생성
         self.sellBtn.scale = 0.2 #버튼 크기
         self.sellBtn.center_x = 1125 #버튼 x좌표
@@ -85,6 +86,8 @@ class GameView(arcade.View): #arcade.View 클래스를 상속받아 GameView 클
         self.goldText.text = f"현재 골드: {self.currentGold}" #업데이트마다 현재 골드 텍스트 업데이트
         self.upgradeGoldText.text = f"업그레이드 비용: {self.upgradeGold}" #업그레이드 골드 텍스트 업데이트
         self.sellCostText.text = f"판매 가격: {self.sellCost}" #판매 가격 텍스트 업데이트
+        self.levels.texture = self.levelTexture[self.currentLevel] #currentLevel따라 스프라이트 리스트 인덱스값 변경
+        self.consoleText.text = "콘솔 로그"
         if 0 <= self.currentLevel <= 2: #강화 레벨이 올라갈수록 강화 소모 비용 증가
             self.upgradeGold = self.currentLevel * 100 #0~200
         elif 3 <= self.currentLevel <= 5:
@@ -96,7 +99,6 @@ class GameView(arcade.View): #arcade.View 클래스를 상속받아 GameView 클
         elif 12 <= self.currentLevel <= 13:
             self.upgradeGold = self.currentLevel * 3000 #36000~39000
         self.upgradePercentText.text = f"성공 확률: {self.upgradePercent}%" #업그레이드 성공 확률 텍스트 업데이트
-        self.levels.texture = self.levelTexture[self.currentLevel] #currentLevel따라 스프라이트 리스트 인덱스값 변경
         if 0 <= self.currentLevel <= 2: #레벨따라 판매 가격 
             self.sellCost = self.currentLevel * 200 #0~400
         elif 3 <= self.currentLevel <= 5:
@@ -121,6 +123,7 @@ class GameView(arcade.View): #arcade.View 클래스를 상속받아 GameView 클
         self.upgradePercentText.draw()
         self.levelList.draw() 
         self.sellCostText.draw() 
+        self.consoleText.draw()
         if self.currentLevel == 14:
             self.maxLevel.draw() #만렙 달성
     def on_mouse_press(self, x, y, button, modifiers): #마우스로 버튼 클릭했을 때 호출되는 함수
@@ -173,5 +176,5 @@ def main(): #메인 함수
     
 
 
-if __name__ == "__main__": #이 파일로 직접 실행할 때만 main()함수 호출(다른 파일에서 import시 main()함수 바로 호출 안됨)
-    main()
+
+main()
