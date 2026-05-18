@@ -1,54 +1,49 @@
 import arcade
-import random
 
-from config import get_path
-from upgrade import *
+from config import get_path #config 파일의 get_path 함수 import
+from upgrade import * #upgrade 파일의 모든 함수 import
 from ui import *
+from assets import load_level_textures
+"""
+개발할 때 알아둘 것
+arcade 라이브러리에서 화면 출력 방법
+1. arcade.View 클래스를 상속받는 클래스를 만든다.
+2. 스프라이트 리스트 생성
+3. 이미지를 넣은 스프라이트 생성
+4. 스프라이트 리스트에 스프라이트 추가 (append)
+5. on_draw 함수에서 스프라이트 리스트를 그린다.
 
-class GameView(arcade.View):
+지역 변수 전역 변수 구별하기
+self는 객체 자신 즉 GameView 클래스 객체
 
-    def __init__(self):
-        super().__init__()
+"""
+
+class GameView(arcade.View): #arcade.View 클래스를 상속받는 GameView 클래스
+
+    def __init__(self): #파이썬에서 객체가 생성될 때 자동으로 호출되는 함수
+
+        super().__init__() #부모 클래스의 __init__ 함수도 호출
 
         self.buttonList = None
+        self.levelList = None
+
         self.buttons = {}
 
         self.currentLevel = 0
         self.currentGold = 10000
 
-        self.upgradeClicked = False
-        self.upgradeRandom = 0
-        self.upgradePercent = 100
         self.upgradeGold = 0
+        self.upgradePercent = 100
         self.sellCost = 0
-
 
     def setup(self):
 
         self.buttonList = arcade.SpriteList()
         self.levelList = arcade.SpriteList()
 
-        self.buttons = {}
-
         create_texts(self)
 
-        self.levelTexture = [
-            arcade.load_texture(get_path("Assets", "Level1.png")),
-            arcade.load_texture(get_path("Assets", "Level2.png")),
-            arcade.load_texture(get_path("Assets", "Level3.png")),
-            arcade.load_texture(get_path("Assets", "Level4.png")),
-            arcade.load_texture(get_path("Assets", "Level5.png")),
-            arcade.load_texture(get_path("Assets", "Level6.png")),
-            arcade.load_texture(get_path("Assets", "Level7.png")),
-            arcade.load_texture(get_path("Assets", "Level8.png")),
-            arcade.load_texture(get_path("Assets", "Level9.png")),
-            arcade.load_texture(get_path("Assets", "Level10.png")),
-            arcade.load_texture(get_path("Assets", "Level11.png")),
-            arcade.load_texture(get_path("Assets", "Level12.png")),
-            arcade.load_texture(get_path("Assets", "Level13.png")),
-            arcade.load_texture(get_path("Assets", "Level14.png")),
-            arcade.load_texture(get_path("Assets", "Level15.png"))
-        ]
+        self.levelTexture = load_level_textures()
 
         self.levels = arcade.Sprite()
 
@@ -58,6 +53,10 @@ class GameView(arcade.View):
 
         self.levelList.append(self.levels)
 
+        self.create_buttons()
+
+    def create_buttons(self):
+
         self.upgradeBtn = arcade.Sprite(
             get_path("Assets", "Upgrade.png")
         )
@@ -65,8 +64,6 @@ class GameView(arcade.View):
         self.upgradeBtn.scale = 0.3
         self.upgradeBtn.center_x = 1100
         self.upgradeBtn.center_y = 500
-
-        self.buttons[self.upgradeBtn] = self.upgrade
 
         self.sellBtn = arcade.Sprite(
             get_path("Assets", "Sell.png")
@@ -76,24 +73,31 @@ class GameView(arcade.View):
         self.sellBtn.center_x = 1125
         self.sellBtn.center_y = 300
 
+        self.buttons[self.upgradeBtn] = self.upgrade
         self.buttons[self.sellBtn] = self.sell
 
         self.buttonList.append(self.upgradeBtn)
         self.buttonList.append(self.sellBtn)
 
-
     def on_update(self, delta_time):
 
-        self.upgradeGold = get_upgrade_cost(self.currentLevel)
-        self.sellCost = get_sell_price(self.currentLevel)
-        self.upgradePercent = get_upgrade_percent(self.currentLevel)
+        self.upgradeGold = get_upgrade_cost(
+            self.currentLevel
+        )
+
+        self.sellCost = get_sell_price(
+            self.currentLevel
+        )
+
+        self.upgradePercent = get_upgrade_percent(
+            self.currentLevel
+        )
 
         update_texts(self)
 
-        self.levels.texture = self.levelTexture[self.currentLevel]
-
-        self.consoleText.text = "콘솔 로그"
-
+        self.levels.texture = (
+            self.levelTexture[self.currentLevel]
+        )
 
     def on_draw(self):
 
@@ -101,13 +105,13 @@ class GameView(arcade.View):
 
         self.buttonList.draw()
 
+        self.levelList.draw()
+
         self.levelText.draw()
         self.goldText.draw()
 
         self.upgradeGoldText.draw()
         self.upgradePercentText.draw()
-
-        self.levelList.draw()
 
         self.sellCostText.draw()
         self.consoleText.draw()
@@ -115,41 +119,40 @@ class GameView(arcade.View):
         if self.currentLevel == 14:
             self.maxLevel.draw()
 
+    def on_mouse_press(
+        self,
+        x,
+        y,
+        button,
+        modifiers
+    ):
 
-    def on_mouse_press(self, x, y, button, modifiers):
+        clicked = arcade.get_sprites_at_point(
+            (x, y),
+            self.buttonList
+        )
 
-        if arcade.get_sprites_at_point((x, y), self.buttonList):
+        for btn in clicked:
 
-            for btn in arcade.get_sprites_at_point((x, y), self.buttonList):
+            action = self.buttons.get(btn)
 
-                actions = self.buttons.get(btn)
-
-                if actions:
-                    actions()
-
+            if action:
+                action()
 
     def upgrade(self):
 
-        self.upgradeRandom = random.randint(1, 100)
-
-        if self.currentLevel < 14:
-
-            if self.currentGold >= self.upgradeGold:
-
-                if self.upgradeRandom <= self.upgradePercent:
-
-                    self.currentLevel += 1
-                    self.currentGold -= self.upgradeGold
-
-                else:
-
-                    self.currentLevel = 0
-                    self.upgradePercent = 100
-
+        self.currentLevel, self.currentGold = (
+            try_upgrade(
+                self.currentLevel,
+                self.currentGold
+            )
+        )
 
     def sell(self):
 
-        self.currentGold += get_sell_price(self.currentLevel)
-
-        self.currentLevel = 0
-        self.upgradePercent = 100
+        self.currentLevel, self.currentGold = (
+            sell_item(
+                self.currentLevel,
+                self.currentGold
+            )
+        )
