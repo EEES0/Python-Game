@@ -54,19 +54,16 @@ def get_upgrade_percent(level):
     return max(100 - level * 5, 20)
 
 
-def try_upgrade(level, gold):
+def try_upgrade(level, gold, bonus_percent = 0):
 
     if level >= 14:
         return level, gold
 
     cost = get_upgrade_cost(level)
-    percent = get_upgrade_percent(level)
-
+    percent = bonus_percent or get_upgrade_percent(level)
     if gold < cost:
         return level, gold
-
     rand = random.randint(1, 100)
-
     if rand <= percent:
 
         level += 1
