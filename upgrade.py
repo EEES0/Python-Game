@@ -1,7 +1,6 @@
 import random
 
 """
-이것도 알아두면 좋음
 level 의미
 gameview.py 84-86줄 보면 이 함수 호출할 때 self.currentLevel를 인수로 넘겨줌
 그걸 level 매개변수로 받아서 다시 돌려줌
