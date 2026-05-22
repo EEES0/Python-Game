@@ -1,5 +1,5 @@
 import random
-
+import requests
 """
 level 의미
 gameview.py 84-86줄 보면 이 함수 호출할 때 self.currentLevel를 인수로 넘겨줌
@@ -54,7 +54,12 @@ def get_upgrade_percent(level):
     return max(100 - level * 5, 20)
 
 
-def try_upgrade(level, gold, bonus_percent = 0):
+def try_upgrade(
+        level, 
+        gold, 
+        bonus_percent,
+        name
+        ):
 
     if level >= 14:
         return level, gold
@@ -68,6 +73,14 @@ def try_upgrade(level, gold, bonus_percent = 0):
 
         level += 1
         gold -= cost
+        response = requests.post(
+        "http://127.0.0.1:8000/save",
+        params={
+            "name": name,
+            "level": level
+                }
+        )
+        
 
     else:
 
