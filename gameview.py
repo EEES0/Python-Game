@@ -1,5 +1,6 @@
 import arcade
 import arcade.gui
+import requests
 from config import get_path #config 파일의 get_path 함수 import
 from upgrade import * #upgrade 파일의 모든 함수 import
 from ui import *
@@ -18,12 +19,17 @@ self는 객체 자신 즉 GameView 클래스 객체
 
 """
 
-class GameView(arcade.View): #arcade.View 클래스를 상속받는 GameView 클래스
+class GameView(arcade.View):
 
-    def __init__(self): #파이썬에서 객체가 생성될 때 자동으로 호출되는 함수
+    def __init__(self):
 
-        super().__init__() #부모 클래스의 __init__ 함수도 호출
+        super().__init__()
+
         self.ranking = []
+        self.rank_texts = []
+
+        self.rank_update_timer = 0
+
         self.buttonList = None
         self.levelList = None
 
@@ -39,8 +45,10 @@ class GameView(arcade.View): #arcade.View 클래스를 상속받는 GameView 클
         self.bonus_percent = 0
 
     def setup(self):
+
         self.manager = arcade.gui.UIManager()
         self.manager.enable()
+
         self.input_box = arcade.gui.UIInputText(
             x=100,
             y=300,
@@ -50,6 +58,7 @@ class GameView(arcade.View): #arcade.View 클래스를 상속받는 GameView 클
         )
 
         self.manager.add(self.input_box)
+
         self.buttonList = arcade.SpriteList()
         self.levelList = arcade.SpriteList()
 
@@ -66,6 +75,30 @@ class GameView(arcade.View): #arcade.View 클래스를 상속받는 GameView 클
         self.levelList.append(self.levels)
 
         self.create_buttons()
+
+        self.update_ranking()
+
+    def update_ranking(self):
+
+        response = requests.get(
+            f"{SERVER_URL}/ranking"
+        )
+
+        self.ranking = response.json()
+
+        self.rank_texts.clear()
+
+        for i, data in enumerate(self.ranking):
+
+            text = arcade.Text(
+                f"{i+1}. {data[0]} +{data[1]}",
+                50,
+                500 - i * 30,
+                arcade.color.WHITE,
+                20
+            )
+
+            self.rank_texts.append(text)
 
     def create_buttons(self):
 
@@ -85,11 +118,21 @@ class GameView(arcade.View): #arcade.View 클래스를 상속받는 GameView 클
         self.sellBtn.center_x = 1125
         self.sellBtn.center_y = 300
 
+        self.resetBtn = arcade.Sprite(
+            get_path("Assets", "Reset.png")
+        )
+
+        self.resetBtn.scale = 0.2
+        self.resetBtn.center_x = 400
+        self.resetBtn.center_y = 300
+
         self.buttons[self.upgradeBtn] = self.upgrade
         self.buttons[self.sellBtn] = self.sell
+        self.buttons[self.resetBtn] = self.reset
 
         self.buttonList.append(self.upgradeBtn)
         self.buttonList.append(self.sellBtn)
+        self.buttonList.append(self.resetBtn)
 
     def on_update(self, delta_time):
 
@@ -111,10 +154,20 @@ class GameView(arcade.View): #arcade.View 클래스를 상속받는 GameView 클
             self.levelTexture[self.currentLevel]
         )
 
+        self.rank_update_timer += delta_time
+
+        if self.rank_update_timer >= 3:
+
+            self.rank_update_timer = 0
+
+            self.update_ranking()
+
     def on_draw(self):
 
         self.clear(arcade.color.DARK_GRAY)
+
         self.manager.draw()
+
         self.buttonList.draw()
 
         self.levelList.draw()
@@ -126,20 +179,12 @@ class GameView(arcade.View): #arcade.View 클래스를 상속받는 GameView 클
         self.upgradePercentText.draw()
 
         self.sellCostText.draw()
+
         if self.currentLevel == 14:
             self.maxLevel.draw()
-        for i, data in enumerate(self.ranking):
 
-            name = data[0]
-            level = data[1]
-
-            arcade.draw_text(
-                f"{i+1}. {name} +{level}",
-                50,
-                500 - i * 30,
-                arcade.color.WHITE,
-                20
-            )
+        for text in self.rank_texts:
+            text.draw()
 
     def on_mouse_press(
         self,
@@ -167,16 +212,10 @@ class GameView(arcade.View): #arcade.View 클래스를 상속받는 GameView 클
             try_upgrade(
                 self.currentLevel,
                 self.currentGold,
-                self.bonus_percent,
-                self.input_box.text
+                self.input_box.text,
+                self.bonus_percent
             )
-        
         )
-        response = requests.get(
-            f"{SERVER_URL}/ranking"
-        )
-
-        self.ranking = response.json()
 
     def sell(self):
 
@@ -186,3 +225,11 @@ class GameView(arcade.View): #arcade.View 클래스를 상속받는 GameView 클
                 self.currentGold
             )
         )
+
+    def reset(self):
+
+        requests.post(
+            f"{SERVER_URL}/reset"
+        )
+
+        self.update_ranking()

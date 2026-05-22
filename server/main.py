@@ -4,9 +4,9 @@ import sqlite3
 app = FastAPI()
 
 conn = sqlite3.connect("rank.db", check_same_thread=False) 
-cur = conn.cursor() 
+cur = conn.cursor()
 
-cur.execute( 
+cur.execute(
 """
 CREATE TABLE IF NOT EXISTS ranking(
     name TEXT PRIMARY KEY, 
@@ -41,7 +41,7 @@ def save(name: str, level: int):
     return {"success": "True"}
 
 
-@app.get("/ranking") 
+@app.get("/ranking")
 def ranking():
 
     cur.execute("""
@@ -53,3 +53,12 @@ def ranking():
     data = cur.fetchall()
 
     return data
+
+@app.post("/reset")
+def reset():
+
+    cur.execute("DELETE FROM ranking")
+
+    conn.commit()
+
+    return {"message": "ranking reset"}

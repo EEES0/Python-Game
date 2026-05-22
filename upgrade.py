@@ -59,8 +59,8 @@ def get_upgrade_percent(level):
 def try_upgrade(
         level, 
         gold, 
-        bonus_percent,
-        name
+        name,
+        bonus_percent
         ):
 
     if level >= 14:
