@@ -173,7 +173,7 @@ class GameView(arcade.View): #arcade.View 클래스를 상속받는 GameView 클
         
         )
         response = requests.get(
-            "http://127.0.0.1:8000/ranking"
+            f"{SERVER_URL}/ranking"
         )
 
         self.ranking = response.json()
