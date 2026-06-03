@@ -61,10 +61,11 @@ class Inventory:
                     x += 80  # 아이템 간격
 
 
-class MyGame(arcade.Window):
-    def __init__(self):
-        super().__init__(800, 600, "Inventory Example")
+class MyGame(arcade.View):
+    def __init__(self, game_view):
+        super().__init__()
         self.inventory = Inventory()
+        self.game_view = game_view
 
     def on_draw(self):
         self.clear()
@@ -73,6 +74,10 @@ class MyGame(arcade.Window):
 
     def on_mouse_press(self, x, y, button, modifiers):
         self.inventory.check_click(x, y)
+    def on_key_press(self, key, modifiers):
+
+        if key == arcade.key.ESCAPE:
+            self.window.show_view(self.game_view)
 
 
 if __name__ == "__main__":

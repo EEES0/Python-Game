@@ -4,6 +4,7 @@ from config import get_path #config 파일의 get_path 함수 import
 from upgrade import * #upgrade 파일의 모든 함수 import
 from ui import *
 from assets import load_level_textures
+from inventory import MyGame
 """
 개발할 때 알아둘 것
 arcade 라이브러리에서 화면 출력 방법
@@ -72,12 +73,21 @@ class GameView(arcade.View): #arcade.View 클래스를 상속받는 GameView 클
         self.sellBtn.scale = 0.2
         self.sellBtn.center_x = 1125
         self.sellBtn.center_y = 300
+        
+        self.invenBtn = arcade.Sprite(
+            get_path("Assets", "Inven.png")
+        )
 
         self.buttons[self.upgradeBtn] = self.upgrade
         self.buttons[self.sellBtn] = self.sell
+        self.buttons[self.invenBtn] = self.inven
 
         self.buttonList.append(self.upgradeBtn)
         self.buttonList.append(self.sellBtn)
+        self.buttonList.append(self.invenBtn)
+
+    def inven(self):
+        self.window.show_view(MyGame(self))
 
     def on_update(self, delta_time):
 
