@@ -114,8 +114,6 @@ class GameView(arcade.View): #arcade.View 클래스를 상속받는 GameView 클
         self.upgradePercentText.draw()
 
         self.sellCostText.draw()
-        self.consoleText.draw()
-
         if self.currentLevel == 14:
             self.maxLevel.draw()
 
@@ -146,7 +144,9 @@ class GameView(arcade.View): #arcade.View 클래스를 상속받는 GameView 클
                 self.currentLevel,
                 self.currentGold
             )
+        
         )
+        mustSuccess = True
 
     def sell(self):
 
