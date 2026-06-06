@@ -1,7 +1,7 @@
 import arcade
 # item.py 파일에서 아이템 리스트(item_list)를 가져옵니다.
 import item
-
+from config import get_path
 class Inventory:
     def __init__(self):
         self.button_x = 100
@@ -13,6 +13,15 @@ class Inventory:
         # item.py에 정의된 아이템 목록을 가져옵니다.
         # 만약 item.py의 item_list가 비어있어도 에러가 나지 않습니다.
         self.items = getattr(item, 'item_list', [])
+        self.backList = arcade.SpriteList()
+    def setup(self):
+        self.backBtn = arcade.Sprite(
+            get_path("Assets", "Inven.png")
+        )
+        self.backBtn.scale = 0.5
+        self.backBtn.center_x = 1125
+        self.backBtn.center_y = 100
+        self.backList.append(self.backBtn)
 
     def draw_button(self):
         # 버튼 배경 그리기
@@ -35,6 +44,7 @@ class Inventory:
         if (self.button_x - self.button_width / 2 <= x <= self.button_x + self.button_width / 2
                 and self.button_y - self.button_height / 2 <= y <= self.button_y + self.button_height / 2):
             self.is_open = not self.is_open
+            
 
     def draw_inventory(self):
         if self.is_open:
@@ -65,18 +75,18 @@ class MyGame(arcade.View):
     def __init__(self, game_view):
         super().__init__()
         self.inventory = Inventory()
+        self.inventory.setup()
         self.game_view = game_view
 
     def on_draw(self):
         self.clear()
         self.inventory.draw_button()
         self.inventory.draw_inventory()
+        self.inventory.backList.draw()
 
     def on_mouse_press(self, x, y, button, modifiers):
         self.inventory.check_click(x, y)
-    def on_key_press(self, key, modifiers):
-
-        if key == arcade.key.ESCAPE:
+        if (arcade.get_sprites_at_point((x, y), self.inventory.backList)):
             self.window.show_view(self.game_view)
 
 

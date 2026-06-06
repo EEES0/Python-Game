@@ -78,6 +78,10 @@ class GameView(arcade.View): #arcade.View 클래스를 상속받는 GameView 클
             get_path("Assets", "Inven.png")
         )
 
+        self.invenBtn.scale = 0.5
+        self.invenBtn.center_x = 1125
+        self.invenBtn.center_y = 100
+
         self.buttons[self.upgradeBtn] = self.upgrade
         self.buttons[self.sellBtn] = self.sell
         self.buttons[self.invenBtn] = self.inven
