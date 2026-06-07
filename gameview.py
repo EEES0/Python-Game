@@ -50,7 +50,7 @@ class GameView(arcade.View): #arcade.View 클래스를 상속받는 GameView 클
 
         self.levels.center_x = 640
         self.levels.center_y = 380
-        self.levels.scale = 0.3
+        self.levels.scale = 1
 
         self.levelList.append(self.levels)
 
@@ -70,16 +70,16 @@ class GameView(arcade.View): #arcade.View 클래스를 상속받는 GameView 클
             get_path("Assets", "Sell.png")
         )
 
-        self.sellBtn.scale = 0.2
-        self.sellBtn.center_x = 1125
-        self.sellBtn.center_y = 300
+        self.sellBtn.scale = 0.5
+        self.sellBtn.center_x = 1105
+        self.sellBtn.center_y = 350
         
         self.invenBtn = arcade.Sprite(
             get_path("Assets", "Inven.png")
         )
 
         self.invenBtn.scale = 0.5
-        self.invenBtn.center_x = 1125
+        self.invenBtn.center_x = 1100
         self.invenBtn.center_y = 100
 
         self.buttons[self.upgradeBtn] = self.upgrade
@@ -115,7 +115,7 @@ class GameView(arcade.View): #arcade.View 클래스를 상속받는 GameView 클
 
     def on_draw(self):
 
-        self.clear(arcade.color.DARK_GRAY)
+        self.clear(arcade.color.BEIGE)
 
         self.buttonList.draw()
 
@@ -160,7 +160,6 @@ class GameView(arcade.View): #arcade.View 클래스를 상속받는 GameView 클
             )
         
         )
-        mustSuccess = True
 
     def sell(self):
 
