@@ -1,5 +1,4 @@
 import arcade
-# item.py 파일에서 아이템 리스트(item_list)를 가져옵니다.
 import item
 from config import get_path
 class Inventory:
