@@ -1,13 +1,5 @@
 import arcade
 
-"""
-game 의미
-파이썬에선 객체도 함수의 인수로 넘길 수 있음
-gameview.py 44줄 보면 create_texts(self)로 GameView 클래스의 객체를 인수로 넘긴 걸 볼 수 있음
-그걸 game 매개변수로 받아 사용한거
-game 대신 원하는 이름 붙여도됨
-game 대신 self를 써도 되긴 한데 혼동되기 때문에 관례적으로 사용하지 않음 - 실무에서 조심
-"""
 def create_texts(game):
 
     game.levelText = arcade.Text(

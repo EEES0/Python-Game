@@ -1,6 +1,6 @@
 import arcade
-import item
 from config import get_path
+
 class Inventory:
     def __init__(self):
         self.backbtnList = arcade.SpriteList()
@@ -8,7 +8,7 @@ class Inventory:
         self.shopList = arcade.SpriteList()
     def setup(self):
         self.backBtn = arcade.Sprite(
-            get_path("Assets", "Inven.png")
+            get_path("Assets", "Back.png")
         )
         self.backBtn.scale = 0.5
         self.backBtn.center_x = 1100

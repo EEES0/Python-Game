@@ -5,19 +5,8 @@ from upgrade import * #upgrade 파일의 모든 함수 import
 from ui import *
 from assets import load_level_textures
 from inventory import MyGame
-"""
-개발할 때 알아둘 것
-arcade 라이브러리에서 화면 출력 방법
-1. arcade.View 클래스를 상속받는 클래스를 만든다.
-2. 스프라이트 리스트 생성
-3. 이미지를 넣은 스프라이트 생성
-4. 스프라이트 리스트에 스프라이트 추가 (append)
-5. on_draw 함수에서 스프라이트 리스트를 그린다.
+from battle import Battle
 
-지역 변수 전역 변수 구별하기
-self는 객체 자신 즉 GameView 클래스 객체
-
-"""
 
 class GameView(arcade.View): #arcade.View 클래스를 상속받는 GameView 클래스
 
@@ -82,16 +71,28 @@ class GameView(arcade.View): #arcade.View 클래스를 상속받는 GameView 클
         self.invenBtn.center_x = 1100
         self.invenBtn.center_y = 100
 
+        self.battleBtn = arcade.Sprite(
+            get_path("Assets", "Battle.png")
+        )
+
+        self.battleBtn.scale = 0.5
+        self.battleBtn.center_x = 200
+        self.battleBtn.center_y = 100
+
         self.buttons[self.upgradeBtn] = self.upgrade
         self.buttons[self.sellBtn] = self.sell
         self.buttons[self.invenBtn] = self.inven
+        self.buttons[self.battleBtn] = self.battle
 
         self.buttonList.append(self.upgradeBtn)
         self.buttonList.append(self.sellBtn)
         self.buttonList.append(self.invenBtn)
+        self.buttonList.append(self.battleBtn)
 
     def inven(self):
         self.window.show_view(MyGame(self))
+    def battle(self):
+        self.window.show_view(Battle(self))
 
     def on_update(self, delta_time):
 
