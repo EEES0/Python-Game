@@ -16,7 +16,6 @@ class GameView(arcade.View): #arcade.View 클래스를 상속받는 GameView 클
 
         self.buttonList = None
         self.levelList = None
-
         self.buttons = {}
 
         self.currentLevel = 0
@@ -25,6 +24,7 @@ class GameView(arcade.View): #arcade.View 클래스를 상속받는 GameView 클
         self.upgradeGold = 0
         self.upgradePercent = 100
         self.sellCost = 0
+        self.battle_view = Battle(self)
 
     def setup(self):
 
@@ -92,7 +92,7 @@ class GameView(arcade.View): #arcade.View 클래스를 상속받는 GameView 클
     def inven(self):
         self.window.show_view(MyGame(self))
     def battle(self):
-        self.window.show_view(Battle(self))
+        self.window.show_view(self.battle_view)
 
     def on_update(self, delta_time):
 
